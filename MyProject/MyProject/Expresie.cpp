@@ -5,9 +5,12 @@
 using namespace std;
 
 class Expresie {
+
 private:
+
 	char* expresie=nullptr;
 	double* rezultate = nullptr;
+
 public:
 
 	char* getExpresie() {
@@ -16,7 +19,7 @@ public:
 		return copie;
 	}
 
-	void setExpresie(const char* expr) {
+	void setExpresie(char* expr) {
 		if (strlen(expr) < 3)
 			throw exception("expresie vida");
 		if (expresie != nullptr)
@@ -25,8 +28,8 @@ public:
 		strcpy_s(expresie, strlen(expr) + 1, expr);
 	}
 
-	Expresie() {
-		this->setExpresie("0");
+	Expresie():expresie(0){
+		
 	}
 
 	Expresie(char* expr) {
@@ -44,6 +47,11 @@ public:
 		return *this;
 	}
 
+	char& operator[](int index){
+		if(index < 0 || index > strlen(expresie))
+		return expresie[index];
+	}
+
 	~Expresie() {
 		if (expresie != nullptr)
 		{
@@ -57,4 +65,8 @@ public:
 			rezultate = nullptr;
 		}
 	}
+
+	friend ostream& operator<<(ostream&, const Expresie&);
+	friend istream& operator>>(istream&, Expresie&);
 };
+
