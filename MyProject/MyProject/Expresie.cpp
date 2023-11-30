@@ -33,5 +33,28 @@ public:
 		this->setExpresie(expr);
 	}
 
+	Expresie(const Expresie& e) {
+		this->setExpresie(e.expresie);
+	}
 
+	Expresie& operator=(const Expresie& e) {
+		if (this == &e)
+			return *this;
+		this->setExpresie(e.expresie);
+		return *this;
+	}
+
+	~Expresie() {
+		if (expresie != nullptr)
+		{
+			delete[] expresie;
+			expresie = nullptr;
+		}
+
+		if (rezultate != nullptr) 
+		{
+			delete[] rezultate;
+			rezultate = nullptr;
+		}
+	}
 };
