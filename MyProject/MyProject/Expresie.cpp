@@ -19,7 +19,7 @@ public:
 		return copie;
 	}
 
-	void setExpresie(char* expr) {
+	void setExpresie(const char* expr) {
 		if (strlen(expr) < 3)
 			throw exception("expresie vida");
 		if (expresie != nullptr)
@@ -28,11 +28,11 @@ public:
 		strcpy_s(expresie, strlen(expr) + 1, expr);
 	}
 
-	Expresie():expresie(0){
+	Expresie():expresie(nullptr), rezultate(nullptr){
 		
 	}
 
-	Expresie(char* expr) {
+	Expresie(const char* expr) {
 		this->setExpresie(expr);
 	}
 
@@ -48,7 +48,8 @@ public:
 	}
 
 	char& operator[](int index){
-		if(index < 0 || index > strlen(expresie))
+		if (index < 0 || index >= strlen(expresie))
+			throw exception("index invalid");
 		return expresie[index];
 	}
 
