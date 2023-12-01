@@ -4,31 +4,72 @@
 
 using namespace std;
 
+struct Stack {
+	double* elements;
+	int size;
+	int capacity;
+
+	Stack(int capacity) {
+		this->capacity = capacity;
+		this->size = 0;
+		this->elements = new double[capacity];
+	}
+
+	~Stack() {
+		delete[] elements;
+	}
+
+	void push(double value) {
+		if (size < capacity) {
+			elements[size++] = value;
+		}
+	}
+
+	double pop() {
+		if (size > 0) {
+			return elements[--size];
+		}
+		throw exception("stiva este goala");
+	}
+
+	double top() const {
+		if (size > 0) {
+			return elements[size - 1];
+		}
+		throw exception("stiva este goala");
+	}
+
+	bool isEmpty() const {
+		return size == 0;
+	}
+
+};
+
 class Expresie {
 
 private:
 
-	char* expresie=nullptr;
-	double* rezultate = nullptr;
+	char* expression=nullptr;
+	double* solution = nullptr;
 
 public:
 
 	char* getExpresie() {
-		char* copie = new char[strlen(expresie) + 1];
-		strcpy_s(copie, strlen(expresie) + 1, expresie);
+		char* copie = new char[strlen(expression) + 1];
+		strcpy_s(copie, strlen(expression) + 1, expression);
 		return copie;
 	}
 
 	void setExpresie(const char* expr) {
 		if (strlen(expr) < 3)
 			throw exception("expresie vida");
-		if (expresie != nullptr)
-			delete[] expresie;
-		expresie = new char[strlen(expr) + 1];
-		strcpy_s(expresie, strlen(expr) + 1, expr);
+		if (expression != nullptr)
+			delete[] expression;
+		expression = new char[strlen(expr) + 1];
+		strcpy_s(expression, strlen(expr) + 1, expr);
 	}
 
-	Expresie():expresie(nullptr), rezultate(nullptr){
+	Expresie():expression(nullptr), solution(nullptr){
 		
 	}
 
@@ -37,33 +78,33 @@ public:
 	}
 
 	Expresie(const Expresie& e) {
-		this->setExpresie(e.expresie);
+		this->setExpresie(e.expression);
 	}
 
 	Expresie& operator=(const Expresie& e) {
 		if (this == &e)
 			return *this;
-		this->setExpresie(e.expresie);
+		this->setExpresie(e.expression);
 		return *this;
 	}
 
 	char& operator[](int index){
-		if (index < 0 || index >= strlen(expresie))
+		if (index < 0 || index >= strlen(expression))
 			throw exception("index invalid");
-		return expresie[index];
+		return expression[index];
 	}
 
 	~Expresie() {
-		if (expresie != nullptr)
+		if (expression != nullptr)
 		{
-			delete[] expresie;
-			expresie = nullptr;
+			delete[] expression;
+			expression = nullptr;
 		}
 
-		if (rezultate != nullptr) 
+		if (solution != nullptr) 
 		{
-			delete[] rezultate;
-			rezultate = nullptr;
+			delete[] solution;
+			solution = nullptr;
 		}
 	}
 
