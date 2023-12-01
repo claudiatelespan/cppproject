@@ -45,26 +45,39 @@ struct Stack {
 
 };
 
-class Expresie {
+class Expression {
 
 private:
 
-	char* expression=nullptr;
-	double* solution = nullptr;
+	char* expression = nullptr;
+	char* operators = nullptr;
+	double* operands = nullptr;
+	int noOperands = 0;
+	double solution = 0;
+
 
 public:
 
-	char* getExpresie() {
+	//metode de acces
+	char* getExpression() {
 		char* copie = new char[strlen(expression) + 1];
 		strcpy_s(copie, strlen(expression) + 1, expression);
 		return copie;
 	}
+	char* getOperators() {
 
-	double* getSolution() {
+	}
+	double* getOperands() {
+
+	}
+	double getSolution() {
 		return solution;
 	}
+	int getNoOperands() {
+		return noOperands;
+	}
 
-	void setExpresie(const char* expr) {
+	void setExpression(const char* expr) {
 		if (strlen(expr) < 3)
 			throw exception("expresie vida");
 		if (expression != nullptr)
@@ -72,47 +85,66 @@ public:
 		expression = new char[strlen(expr) + 1];
 		strcpy_s(expression, strlen(expr) + 1, expr);
 	}
+	void setOperators(const char* op) {
 
-	Expresie():expression(nullptr), solution(nullptr){
-		
+	}
+	void setOperands(double* op, int nr) {
+
 	}
 
-	Expresie(const char* expr) {
-		this->setExpresie(expr);
+	//constructori
+	Expression() :expression(nullptr), solution(0) {
+
 	}
 
-	Expresie(const Expresie& e) {
-		this->setExpresie(e.expression);
+	Expression(const char* expr) {
+		this->setExpression(expr);
 	}
 
-	Expresie& operator=(const Expresie& e) {
+	Expression(const Expression& e) {
+		this->setExpression(e.expression);
+	}
+
+	//supraincarcari si metode
+	Expression& operator=(const Expression& e) {
 		if (this == &e)
 			return *this;
-		this->setExpresie(e.expression);
+		this->setExpression(e.expression);
 		return *this;
 	}
 
-	char& operator[](int index){
+	char& operator[](int index) {
 		if (index < 0 || index >= strlen(expression))
 			throw exception("index invalid");
 		return expression[index];
 	}
 
-	~Expresie() {
+	void addValue(double val) {
+		double* newValues = new double[noOperands + 1];
+		for (int i = 0; i < noOperands; ++i) {
+			newValues[i] = operands[i];
+		}
+		newValues[noOperands++] = val;
+		delete[] operands;
+		operands = newValues;
+	}
+	/*void descompunere() {
+		for (int i = 0; i < strlen(expression); i++)
+		{
+
+		}
+	}*/
+
+	friend ostream& operator<<(ostream&, const Expression&);
+	friend istream& operator>>(istream&, Expression&);
+		//destructor
+	~Expression() {
 		if (expression != nullptr)
 		{
 			delete[] expression;
 			expression = nullptr;
 		}
-
-		if (solution != nullptr) 
-		{
-			delete[] solution;
-			solution = nullptr;
-		}
 	}
-
-	friend ostream& operator<<(ostream&, const Expresie&);
-	friend istream& operator>>(istream&, Expresie&);
+	
 };
 

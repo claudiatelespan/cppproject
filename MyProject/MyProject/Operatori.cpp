@@ -5,6 +5,14 @@
 using namespace std;
 
 class Operator {
+    char op;
+public:
+    char* getOperator() {
+
+    }
+    void setOperator(const char* op) {
+
+    }
     bool esteOperator(char token) const {
         return (token == '+' || token == '-' || token == '*' || token == '/');
     }
@@ -12,6 +20,7 @@ class Operator {
     int precedentaOperator(char op) const {
         if (op == '+' || op == '-') return 1;
         if (op == '*' || op == '/') return 2;
+        if (op == '^' || op == '#') return 3;
         return 0;
     }
 
