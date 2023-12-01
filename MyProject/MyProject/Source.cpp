@@ -21,8 +21,5 @@ int main() {
 	/*Expresie e;
 	cin >> e;
 	cout << e;*/
-	const char* expresie = "3 4 + 5 *";
-	double rezultat = Expresie::evalueazaExpresie;
-	std::cout << "Rezultat: " << rezultat << std::endl;
 
 }

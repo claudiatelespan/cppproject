@@ -60,6 +60,10 @@ public:
 		return copie;
 	}
 
+	double* getSolution() {
+		return solution;
+	}
+
 	void setExpresie(const char* expr) {
 		if (strlen(expr) < 3)
 			throw exception("expresie vida");
