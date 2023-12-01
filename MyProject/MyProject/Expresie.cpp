@@ -51,8 +51,6 @@ private:
 
 	char* expression = nullptr;
 	char* operators = nullptr;
-	double* operands = nullptr;
-	int noOperands = 0;
 	double solution = 0;
 
 
@@ -64,18 +62,10 @@ public:
 		strcpy_s(copie, strlen(expression) + 1, expression);
 		return copie;
 	}
-	char* getOperators() {
-
-	}
-	double* getOperands() {
-
-	}
 	double getSolution() {
 		return solution;
 	}
-	int getNoOperands() {
-		return noOperands;
-	}
+	
 
 	void setExpression(const char* expr) {
 		if (strlen(expr) < 3)
@@ -85,9 +75,7 @@ public:
 		expression = new char[strlen(expr) + 1];
 		strcpy_s(expression, strlen(expr) + 1, expr);
 	}
-	void setOperators(const char* op) {
-
-	}
+	
 	void setOperands(double* op, int nr) {
 
 	}
@@ -119,15 +107,7 @@ public:
 		return expression[index];
 	}
 
-	void addValue(double val) {
-		double* newValues = new double[noOperands + 1];
-		for (int i = 0; i < noOperands; ++i) {
-			newValues[i] = operands[i];
-		}
-		newValues[noOperands++] = val;
-		delete[] operands;
-		operands = newValues;
-	}
+	
 	/*void descompunere() {
 		for (int i = 0; i < strlen(expression); i++)
 		{
