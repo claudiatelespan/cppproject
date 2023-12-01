@@ -1,20 +1,70 @@
 #include <iostream>
 #include <string>
 #include <cmath>
-#include "Expresie.cpp"
 using namespace std;
 
-class Operator {
-    char op;
-public:
-    char* getOperator() {
+struct Stack {
+    double* elements;
+    int size;
+    int capacity;
 
+    Stack(int capacity) {
+        this->capacity = capacity;
+        this->size = 0;
+        this->elements = new double[capacity];
+    }
+
+    ~Stack() {
+        delete[] elements;
+    }
+
+    void push(double value) {
+        if (size < capacity) {
+            elements[size++] = value;
+        }
+    }
+
+    double pop() {
+        if (size > 0) {
+            return elements[--size];
+        }
+        throw exception("stiva este goala");
+    }
+
+    double top() const {
+        if (size > 0) {
+            return elements[size - 1];
+        }
+        throw exception("stiva este goala");
+    }
+
+    bool isEmpty() const {
+        return size == 0;
+    }
+
+};
+
+class Operator {
+
+private:
+    char op=0;
+
+public:
+    char getOperator() {
+        return op;
     }
     void setOperator(const char* op) {
 
     }
+
+    Operator() : op('\0') {
+    }
+
+    Operator(char operation) : op(operation) {
+    }
+
     bool esteOperator(char token) const {
-        return (token == '+' || token == '-' || token == '*' || token == '/');
+        return (token == '+' || token == '-' || token == '*' || token == '/' || token == '^' || token == '#');
     }
 
     int precedentaOperator(char op) const {

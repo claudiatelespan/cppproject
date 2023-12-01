@@ -1,61 +1,20 @@
 #include <iostream>
 #include <string>
 #include <cmath>
-
+#include "Operatori.cpp"
+#include "Operanzi.cpp"
 using namespace std;
 
-struct Stack {
-	double* elements;
-	int size;
-	int capacity;
 
-	Stack(int capacity) {
-		this->capacity = capacity;
-		this->size = 0;
-		this->elements = new double[capacity];
-	}
-
-	~Stack() {
-		delete[] elements;
-	}
-
-	void push(double value) {
-		if (size < capacity) {
-			elements[size++] = value;
-		}
-	}
-
-	double pop() {
-		if (size > 0) {
-			return elements[--size];
-		}
-		throw exception("stiva este goala");
-	}
-
-	double top() const {
-		if (size > 0) {
-			return elements[size - 1];
-		}
-		throw exception("stiva este goala");
-	}
-
-	bool isEmpty() const {
-		return size == 0;
-	}
-
-};
 
 class Expression {
-
 private:
-
 	char* expression = nullptr;
-	char* operators = nullptr;
+	Operator* operatori=nullptr;
+	Operand* operanzi=nullptr;
 	double solution = 0;
 
-
 public:
-
 	//metode de acces
 	char* getExpression() {
 		char* copie = new char[strlen(expression) + 1];
@@ -68,24 +27,33 @@ public:
 	
 
 	void setExpression(const char* expr) {
-		if (strlen(expr) < 3)
-			throw exception("expresie vida");
+		if (strlen(expr) < 3 || expr==nullptr)
+			throw exception("expression vida");
+		if (operatori != nullptr)
+		{
+			delete[] operatori;
+			operatori = nullptr;
+		}
+		if (operanzi != nullptr)
+		{
+			delete[] operanzi;
+			operanzi = nullptr;
+		}
 		if (expression != nullptr)
 			delete[] expression;
 		expression = new char[strlen(expr) + 1];
 		strcpy_s(expression, strlen(expr) + 1, expr);
+
+		/*parseExpression();
+		evaluateExpression();*/
 	}
 	
-	void setOperands(double* op, int nr) {
-
-	}
-
 	//constructori
-	Expression() :expression(nullptr), solution(0) {
+	Expression() :expression(nullptr), solution(0), operatori(nullptr), operanzi(nullptr) {
 
 	}
 
-	Expression(const char* expr) {
+	Expression(const char* expr):operatori(nullptr), operanzi(nullptr) {
 		this->setExpression(expr);
 	}
 
@@ -107,13 +75,26 @@ public:
 		return expression[index];
 	}
 
-	
-	/*void descompunere() {
-		for (int i = 0; i < strlen(expression); i++)
-		{
-
+	void parseExpression() {
+		int length = strlen(expression);
+		operanzi = new Operand[length];
+		operatori = new Operator[length];
+		int operandIndex = 0;
+		int operatorIndex = 0;
+		for (int i = 0; i < length; i++) {
+			if (isdigit(expression[i]) || (expression[i] == '-' && i + 1 < length && isdigit(expression[i + 1]))) {
+				double val = stod(&expression[i]);
+				operanzi[operandIndex++].addValue(val);
+				while (i + 1 < length && (isdigit(expression[i + 1]) || expression[i + 1] == '.')) {
+					++i;
+				}
+			}
+			else if (expression[i] == '+' || expression[i] == '-' || expression[i] == '*' || expression[i] == '/' || expression[i] == '^' || expression[i] == '#') {
+				operatori[operatorIndex++] = Operator(expression[i]);
+			}
 		}
-	}*/
+	}
+
 
 	friend ostream& operator<<(ostream&, const Expression&);
 	friend istream& operator>>(istream&, Expression&);
@@ -123,6 +104,18 @@ public:
 		{
 			delete[] expression;
 			expression = nullptr;
+		}
+
+		if (operatori != nullptr)
+		{
+			delete[] operatori;
+			operatori = nullptr;
+		}
+
+		if (operanzi != nullptr)
+		{
+			delete[] operanzi;
+			operanzi = nullptr;
 		}
 	}
 	
