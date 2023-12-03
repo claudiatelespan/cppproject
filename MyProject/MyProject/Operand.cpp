@@ -1,77 +1,85 @@
-#include <iostream>
-#include <string>
-#include <cmath>
+#include "Operand.h"
+#include <stdexcept>
 
 using namespace std;
 
-class Operand {
+Operand::Operand() :values(nullptr), count(0) {
 
-private:
-	double* operands = nullptr;
-	int noOperands = 0;
+}
 
-public:
-	double* getOperands() {
-		double* copie = new double[noOperands];
-		for (int i = 0; i < noOperands; i++)
-			copie[i] = operands[i];
-		return copie;
+Operand::Operand(double val) : count(1) {
+	values = new double[count];
+	values[0] = val;
+}
+
+Operand::Operand(const Operand& other) : count(other.count) {
+	values = new double[count];
+	for (int i = 0; i < count; ++i) {
+		values[i] = other.values[i];
 	}
-	int getNoOperands() {
-		return noOperands;
-	}
+}
 
-	void setOperands(double* op, int nr) {
-
-	}
-
-	Operand() :operands(nullptr), noOperands(0) {
-
-	}
-
-	Operand(double* val, int nr) : noOperands(nr) {
-		operands = new double[nr];
-		for(int i=0;i<noOperands;i++)
-			operands[i] = val[i];
-	}
-
-	Operand(const Operand& other) : noOperands(other.noOperands) {
-		operands = new double[noOperands];
-		for (int i = 0; i < noOperands; ++i) {
-			operands[i] = other.operands[i];
+Operand& Operand::operator=(const Operand& other) {
+	if (this != &other) {
+		if (values != nullptr)
+			delete[] values;
+		count = other.count;
+		values = new double[count];
+		for (int i = 0; i < count; ++i) {
+			values[i] = other.values[i];
 		}
 	}
+	return *this;
+}
 
-	Operand& operator=(const Operand& other) {
-		if (this == &other)
-			return *this;
-		if(operands!=nullptr)
-			delete[] operands;
-		noOperands = other.noOperands;
-		operands = new double[noOperands];
-		for (int i = 0; i < noOperands; ++i) {
-			operands[i] = other.operands[i];
-			}
-		
-		return *this;
+Operand::~Operand() {
+	if (values != nullptr)
+	{
+		delete[] values;
+		values = nullptr;
 	}
+}
 
-	void addValue(double val) {
-		double* newValues = new double[noOperands + 1];
-		for (int i = 0; i < noOperands; ++i) {
-			newValues[i] = operands[i];
-		}
-		newValues[noOperands++] = val;
-		if (operands != nullptr)
-			delete[] operands;
-		operands = newValues;
+void Operand::addValue(double val) {
+	double* newValues = new double[count + 1];
+	for (int i = 0; i < count; ++i) {
+		newValues[i] = values[i];
 	}
+	newValues[count++] = val;
+	if (values != nullptr)
+		delete[] values;
+	values = newValues;
+}
 
-	~Operand() {
-		if (operands != nullptr)
-		{
-			delete[] operands;
-			operands = nullptr;
-		}
+double Operand::getValue(int index) const {
+	if (index >= 0 && index < count) {
+		return values[index];
 	}
-};
+	throw std::out_of_range("Index invalid");
+}
+
+int Operand::getCount() const {
+	return count;
+}
+
+bool Operand::isSingleValue() const {
+	return (count == 1);
+}
+
+double Operand::getSingleValue() const {
+	if (count == 1) {
+		return values[0];
+	}
+	else {
+		throw std::invalid_argument("Operand invalid");
+	}
+}
+	
+void setOperands(double* op, int nr) {
+
+}
+
+
+	
+
+	
