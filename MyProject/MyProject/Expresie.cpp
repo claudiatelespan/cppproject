@@ -54,8 +54,165 @@ void Expresie::setExpresie(const char* expr) {
 	evaluateExpresie();*/
 }
 
+void Expresie::evaluateExpresie() {
+    const int maxOperanzi = 10;
+    Operand operanziLoc[maxOperanzi];
+    int topOperanzi = -1;
+
+    const int maxOperatori = 10;
+    Operator stivaOperatori[maxOperatori];
+    int topOperatori = -1;
+
+    for (int i = 0; i < strlen(expresie); ++i) {
+        if (isdigit(expresie[i])) {
+            // Construieste operandul
+            double val = stod(&expresie[i]);
+            operanziLoc[++topOperanzi] = Operand(val);
+            while (i + 1 < strlen(expresie) && (isdigit(expresie[i + 1]) || expresie[i + 1] == '.')) {
+                ++i;
+            }
+        }
+        else if (expresie[i] == '+' || expresie[i] == '-' || expresie[i] == '*' || expresie[i] == '/' || expresie[i] == '^' || expresie[i] == '#') {
+            // Construieste operatorul
+            Operator currentOperator(expresie[i]);
+            // Proceseaza operatorii existenti cu precedenta mai mare sau egala
+            while (topOperatori >= 0 &&
+                !stivaOperatori[topOperatori].isOpenParenthesis() &&
+                stivaOperatori[topOperatori] >= currentOperator &&
+                ((currentOperator.isLeftAssociative() && stivaOperatori[topOperatori] == currentOperator) ||
+                    stivaOperatori[topOperatori] > currentOperator)) {
+                double operand2 = operanziLoc[topOperanzi--].getSingleValue();
+                double operand1 = operanziLoc[topOperanzi--].getSingleValue();
+                Operator op = stivaOperatori[topOperatori--];
+                switch (op.getOperator()) {
+                case '+':
+                    operanziLoc[++topOperanzi] = Operand(operand1 + operand2);
+                    break;
+                case '-':
+                    operanziLoc[++topOperanzi] = Operand(operand1 - operand2);
+                    break;
+                case '*':
+                    operanziLoc[++topOperanzi] = Operand(operand1 * operand2);
+                    break;
+                case '/':
+                    if (operand2 != 0) {
+                        operanziLoc[++topOperanzi] = Operand(operand1 / operand2);
+                    }
+                    else {
+                        throw std::invalid_argument("Impartire la zero");
+                    }
+                    break;
+                case '^':
+                    operanziLoc[++topOperanzi] = Operand(pow(operand1, operand2));
+                    break;
+                case '#':
+                    operanziLoc[++topOperanzi] = Operand(pow(operand1, 1 / operand2));
+                    break;
+                }
+            }
+
+            // Adauga operatorul curent la stivaOperatori
+            stivaOperatori[++topOperatori] = currentOperator;
+        }
+        else if (expresie[i] == '(') {
+            // Adauga paranteza deschisa la stivaOperatori
+            stivaOperatori[++topOperatori] = Operator('(');
+        }
+        else if (expresie[i] == ')') {
+            // Proceseaza operatorii pana la paranteza deschisa corespunzatoare
+            while (topOperatori >= 0 && !stivaOperatori[topOperatori].isOpenParenthesis()) {
+                double operand2 = operanziLoc[topOperanzi--].getSingleValue();
+                double operand1 = operanziLoc[topOperanzi--].getSingleValue();
+                Operator op = stivaOperatori[topOperatori--];
+                switch (op.getOperator()) {
+                case '+':
+                    operanziLoc[++topOperanzi] = Operand(operand1 + operand2);
+                    break;
+                case '-':
+                    operanziLoc[++topOperanzi] = Operand(operand1 - operand2);
+                    break;
+                case '*':
+                    operanziLoc[++topOperanzi] = Operand(operand1 * operand2);
+                    break;
+                case '/':
+                    if (operand2 != 0) {
+                        operanziLoc[++topOperanzi] = Operand(operand1 / operand2);
+                    }
+                    else {
+                        throw std::invalid_argument("Impartire la zero");
+                    }
+                    break;
+                case '^':
+                    operanziLoc[++topOperanzi] = Operand(pow(operand1, operand2));
+                    break;
+                case '#':
+                    operanziLoc[++topOperanzi] = Operand(pow(operand1, 1 / operand2));
+                    break;
+                }
+            }
+
+            // Elimina paranteza deschisa din stivaOperatori
+            if (topOperatori >= 0 && stivaOperatori[topOperatori].isOpenParenthesis()) {
+                --topOperatori;
+            }
+            else {
+                throw std::invalid_argument("Paranteza inchisa fara corespondent deschis");
+            }
+        }
+    }
+
+    // Proceseaza operatorii ramasi
+    while (topOperatori >= 0) {
+        double operand2 = operanziLoc[topOperanzi--].getSingleValue();
+        double operand1 = operanziLoc[topOperanzi--].getSingleValue();
+        Operator op = stivaOperatori[topOperatori--];
+        switch (op.getOperator()) {
+        case '+':
+            operanziLoc[++topOperanzi] = Operand(operand1 + operand2);
+            break;
+        case '-':
+            operanziLoc[++topOperanzi] = Operand(operand1 - operand2);
+            break;
+        case '*':
+            operanziLoc[++topOperanzi] = Operand(operand1 * operand2);
+            break;
+        case '/':
+            if (operand2 != 0) {
+                operanziLoc[++topOperanzi] = Operand(operand1 / operand2);
+            }
+            else {
+                throw std::invalid_argument("Impartire la zero");
+            }
+            break;
+        case '^':
+            operanziLoc[++topOperanzi] = Operand(pow(operand1, operand2));
+            break;
+        case '#':
+            operanziLoc[++topOperanzi] = Operand(pow(operand1, 1 / operand2));
+            break;
+        }
+    }
+
+    // Verifica rezultatul final
+    if (topOperanzi == 0) {
+        rezultat = operanziLoc[topOperanzi].getSingleValue();
+    }
+    else {
+        throw std::invalid_argument("Expresie invalida");
+    }
+}
+
 double Expresie::getRezultat() const {
 	return rezultat;
+}
+
+void Expresie::runCalculator() {
+    cin >> *this;
+    while (strcmp(this->getExpresie(), "exit") != 0) {
+        this->evaluateExpresie();
+        cout << *this;
+        cin >> *this;
+    }
 }
 
 Expresie::operator float() {
@@ -65,7 +222,6 @@ Expresie::operator float() {
 
 	return static_cast<float>(rezultat);
 }
-
 
 char& Expresie::operator[](int index) const {
 	if (index < 0 || index >= strlen(expresie))

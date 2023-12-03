@@ -4,6 +4,6 @@ using namespace std;
 
 int main() {
 	Expresie e;
-
+	e.runCalculator();
 	return 0;
 }
