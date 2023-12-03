@@ -21,11 +21,11 @@ public:
 
     char* getExpresie() const;
     void setExpresie(const char* expr);
-    void evaluateExpresie();
+    //void evaluateExpresie();
     double getRezultat() const;
     void runCalculator();
     operator float();
-    char operator[](int index) const;
+    char& operator[](int index) const;
 
     friend std::ostream& operator<<(std::ostream& out, const Expresie& e);
     friend std::istream& operator>>(std::istream& in, Expresie& e);
