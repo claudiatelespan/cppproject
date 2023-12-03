@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 #include <cmath>
-#include "Operatori.cpp"
-#include "Operanzi.cpp"
+#include "Operator.cpp"
+#include "Operand.cpp"
 using namespace std;
 
 
