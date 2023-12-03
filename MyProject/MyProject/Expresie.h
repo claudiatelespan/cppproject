@@ -1,5 +1,5 @@
 #pragma once
-#include "Operand.h"
+#include "StackOperanzi.h"
 #include "Operator.h"
 #include <iostream>
 #include <string>
@@ -7,7 +7,7 @@
 class Expresie {
 private:
     char* expresie;
-    Operand* operanzi;
+    StackOperanzi operanzi;
     Operator* operatori;
     double rezultat;
     static const double REZULTAT_DEFAULT;
