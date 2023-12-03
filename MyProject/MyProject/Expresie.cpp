@@ -211,7 +211,6 @@ double Expresie::getRezultat() const {
 
 void Expresie::runCalculator() {
     cin >> *this;
-    cout << *this->expresie;
     while (strcmp(this->getExpresie(), "exit") != 0) {
         this->evaluateExpresie();
         cout << *this;
