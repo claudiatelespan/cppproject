@@ -211,6 +211,7 @@ double Expresie::getRezultat() const {
 
 void Expresie::runCalculator() {
     cin >> *this;
+    cout << *this->expresie;
     while (strcmp(this->getExpresie(), "exit") != 0) {
         this->evaluateExpresie();
         cout << *this;
@@ -241,8 +242,20 @@ istream& operator>>(istream& in, Expresie& e) {
 	cout << endl << "Introduceti expresie: ";
 	string copie;
 	in >> copie;
-	e.setExpresie(copie.c_str());
+    e.setExpresie(Expresie::removeSpaces(copie.c_str()));
 	return in;
+}
+
+char* Expresie::removeSpaces(const char* input) {
+    char* result = new char[strlen(input) + 1];
+    int j = 0;
+    for (int i = 0; input[i] != '\0'; ++i) {
+        if (input[i] != ' ') {
+            result[j++] = input[i];
+        }
+    }
+    result[j] = '\0';
+    return result;
 }
 
 Expresie::~Expresie() {
@@ -258,6 +271,7 @@ Expresie::~Expresie() {
 		operatori = nullptr;
 	}
 }
+
 	
 
 
