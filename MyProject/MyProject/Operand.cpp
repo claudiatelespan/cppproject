@@ -1,5 +1,6 @@
 #include "Operand.h"
 #include <stdexcept>
+#include <cmath>
 
 using namespace std;
 
@@ -31,6 +32,34 @@ Operand& Operand::operator=(const Operand& other) {
 	}
 	return *this;
 }
+
+//Operand Operand::operator+(const Operand& other) const {
+//	Operand result(*this);  
+//	if (result.count == other.count) {
+//		for (int i = 0; i < result.count; ++i) {
+//			result.values[i] += other.values[i];
+//		}
+//	}
+//	else {
+//		
+//		throw std::invalid_argument("Nu se poate efectua");
+//	}
+//	return result;
+//}
+//
+//Operand Operand::operator-(const Operand& other) const {
+//	Operand result(*this);  
+//	if (result.count == other.count) {
+//		for (int i = 0; i < result.count; ++i) {
+//			result.values[i] -= other.values[i];
+//		}
+//	}
+//	else {
+//
+//		throw std::invalid_argument("Nu se poate efectua");
+//	}
+//	return result;
+//}
 
 Operand::~Operand() {
 	if (values != nullptr)
@@ -78,6 +107,8 @@ double Operand::getSingleValue() const {
 void setOperands(double* op, int nr) {
 
 }
+
+//operatori << si >>
 
 
 	

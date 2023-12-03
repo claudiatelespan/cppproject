@@ -49,9 +49,6 @@ void Expresie::setExpresie(const char* expr) {
 		delete[] expresie;
 	expresie = new char[strlen(expr) + 1];
 	strcpy_s(expresie, strlen(expr) + 1, expr);
-
-	/*parseExpression();
-	evaluateExpresie();*/
 }
 
 void Expresie::evaluateExpresie() {
@@ -63,6 +60,14 @@ void Expresie::evaluateExpresie() {
     Operator stivaOperatori[maxOperatori];
     int topOperatori = -1;
 
+    //Inlocuiesc parantezele patrate cu rotunde
+    for (int i = 0; i < strlen(expresie); ++i) {
+        if (expresie[i] == '[')
+            expresie[i] = '(';
+        else if (expresie[i] == ']')
+            expresie[i] = ')';
+    }
+        
     for (int i = 0; i < strlen(expresie); ++i) {
         if (isdigit(expresie[i])) {
             // Construieste operandul

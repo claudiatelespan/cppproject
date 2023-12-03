@@ -10,6 +10,8 @@ public:
     Operand(double val);
     Operand(const Operand& other);
     Operand& operator=(const Operand& other);
+    //Operand operator+(const Operand& other) const;
+    //Operand operator-(const Operand& other) const;
     ~Operand();
 
     void addValue(double val);
