@@ -52,7 +52,7 @@ double StackOperanzi::getTop() {
     return stack[top];
 }
 
-bool StackOperanzi::isEmpty() {
+bool StackOperanzi::isEmpty() const{
     return top < 0;
 }
 
@@ -60,10 +60,30 @@ int StackOperanzi::size() {
     return top + 1;
 }
 
-void StackOperanzi::printStack() const {
-    cout << "Stackul contine: ";
-    for (int i = 0; i <= top; ++i) {
-        cout << stack[i] << " ";
+ostream& operator<<(ostream& out, const StackOperanzi& stack) {
+    if (stack.isEmpty()) {
+        out << "Stack-ul este gol.";
     }
-    cout << endl;
+    else {
+        out << "Stack-ul contine elementele:";
+        for (int i = 0; i <= stack.top; ++i) {
+            out << stack.stack[stack.top-i] << " ";
+        }
+    }
+    return out;
+}
+
+istream& operator>>(istream& in, StackOperanzi& stack) {
+    int size;
+    std::cout << "Introduceti dimensiunea stack-ului:";
+    in >> size;
+
+    double value;
+    for (int i = 0; i < size; ++i) {
+        std::cout << "Introduceti elementul" << i + 1 << ": ";
+        in >> value;
+        stack = stack + value;
+    }
+
+    return in;
 }
