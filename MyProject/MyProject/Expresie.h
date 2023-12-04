@@ -26,6 +26,7 @@ public:
     void runCalculator();
     operator float();
     char& operator[](int index) const;
+    int countDecimalPlaces(double value) const;
 
     friend std::ostream& operator<<(std::ostream& out, const Expresie& e);
     friend std::istream& operator>>(std::istream& in, Expresie& e);

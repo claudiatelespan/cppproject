@@ -239,7 +239,7 @@ char& Expresie::operator[](int index) const {
 //	return out;
 //}
 
-int countDecimalPlaces(double value) {
+int Expresie::countDecimalPlaces(double value) const {
     int intValue = static_cast<int>(value);
     double fractionalPart = value - intValue;
 
@@ -259,7 +259,7 @@ ostream& operator<<(ostream& out, const Expresie& e) {
         out << "Rezultatul expresiei: " << (int)e.getRezultat();
     }
     else {
-        /*int precision = countDecimalPlaces(e.getRezultat());*/
+        /*int precision = e.countDecimalPlaces(e.getRezultat());*/
         out << "Rezultatul expresiei: " /*<< fixed << setprecision(precision) */<< e.getRezultat();
     }
     return out;
