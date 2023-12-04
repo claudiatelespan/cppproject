@@ -1,5 +1,6 @@
 #include "Expresie.h"
 #include <iomanip>
+#include <sstream>
 
 using namespace std;
 
@@ -233,9 +234,35 @@ char& Expresie::operator[](int index) const {
 	return expresie[index];
 }
 
+//ostream& operator<<(ostream& out, const Expresie& e) {
+//	out << "Rezultatul expresiei:" << to_string(e.getRezultat());
+//	return out;
+//}
+
+int countDecimalPlaces(double value) {
+    int intValue = static_cast<int>(value);
+    double fractionalPart = value - intValue;
+
+    int precision = 0;
+    while (fractionalPart != 0.0 && precision < 6) {
+        fractionalPart *= 10.0;
+        intValue = static_cast<int>(fractionalPart);
+        fractionalPart -= intValue;
+        ++precision;
+    }
+
+    return precision;
+}
+
 ostream& operator<<(ostream& out, const Expresie& e) {
-	out << "Rezultatul expresiei:" << to_string(e.getRezultat());
-	return out;
+    if (e.getRezultat() == (int)e.getRezultat()) {
+        out << "Rezultatul expresiei: " << (int)e.getRezultat();
+    }
+    else {
+        /*int precision = countDecimalPlaces(e.getRezultat());*/
+        out << "Rezultatul expresiei: " /*<< fixed << setprecision(precision) */<< e.getRezultat();
+    }
+    return out;
 }
 
 istream& operator>>(istream& in, Expresie& e) {
