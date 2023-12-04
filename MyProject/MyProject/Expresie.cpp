@@ -239,7 +239,6 @@ ostream& operator<<(ostream& out, const Expresie& e) {
         out << "Rezultatul expresiei: " << (int)e.getRezultat();
     }
     else {
-        
         out << "Rezultatul expresiei: " << e.getRezultat();
     }
     return out;
