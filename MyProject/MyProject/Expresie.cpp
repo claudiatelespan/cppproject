@@ -42,6 +42,7 @@ void Expresie::setExpresie(const char* expr) {
 	}
 	if (expresie != nullptr)
 		delete[] expresie;
+
 	expresie = new char[strlen(expr) + 1];
 	strcpy_s(expresie, strlen(expr) + 1, expr);
 }
@@ -240,21 +241,9 @@ ostream& operator<<(ostream& out, const Expresie& e) {
 istream& operator>>(istream& in, Expresie& e) {
 	cout << endl << "Introduceti expresie: ";
 	string copie;
-	in >> copie;
-    e.setExpresie(Expresie::removeSpaces(copie.c_str()));
+    getline(in, copie);
+    e.setExpresie(copie.c_str());
 	return in;
-}
-
-char* Expresie::removeSpaces(const char* input) {
-    char* result = new char[strlen(input) + 1];
-    int j = 0;
-    for (int i = 0; input[i] != '\0'; ++i) {
-        if (input[i] != ' ') {
-            result[j++] = input[i];
-        }
-    }
-    result[j] = '\0';
-    return result;
 }
 
 Expresie::~Expresie() {

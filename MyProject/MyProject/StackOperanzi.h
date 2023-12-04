@@ -21,9 +21,8 @@ public:
     double getTop();
     bool isEmpty() const;
     int size();
-    StackOperanzi& operator+(double number);  // Push an element
-    StackOperanzi& operator--();  // Pop an element
-    void printStack() const;
+    StackOperanzi& operator+(double number); //Pune pe stiva un element
+    StackOperanzi& operator--();  //Scoate din stiva un element
 
     friend std::ostream& operator<<(std::ostream& out, const StackOperanzi& stack);
     friend std::istream& operator>>(std::istream& in, StackOperanzi& stack);

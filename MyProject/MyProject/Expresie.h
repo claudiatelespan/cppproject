@@ -20,7 +20,6 @@ public:
     ~Expresie();
 
     char* getExpresie() const;
-    static char* removeSpaces(const char* input);
     void setExpresie(const char* expr);
     void evaluateExpresie();
     double getRezultat() const;
