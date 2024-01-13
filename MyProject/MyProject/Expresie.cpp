@@ -7,11 +7,11 @@ using namespace std;
 
 const double Expresie::REZULTAT_DEFAULT = -1.0;
 
-Expresie::Expresie() :expresie(nullptr), rezultat(REZULTAT_DEFAULT), operatori(nullptr), operanzi() {
+Expresie::Expresie() :expresie(nullptr), rezultat(REZULTAT_DEFAULT), operatori(nullptr), operanzi(),folosit(false) {
 
 }
 
-Expresie::Expresie(const char* expr) :operatori(nullptr), operanzi() {
+Expresie::Expresie(const char* expr) :operatori(nullptr), operanzi(), folosit(false) {
 	this->setExpresie(expr);
 }
 
@@ -19,6 +19,7 @@ Expresie::Expresie(const Expresie& e) {
 	this->setExpresie(e.expresie);
 	operanzi = e.operanzi;
 	operatori = e.operatori;
+    folosit = e.folosit;
 }
 	
 Expresie& Expresie::operator=(const Expresie& e) {
@@ -26,6 +27,7 @@ Expresie& Expresie::operator=(const Expresie& e) {
 		this->setExpresie(e.expresie);
 		operatori = e.operatori;
 		operanzi = e.operanzi;
+        folosit = e.folosit;
 	}
 	return *this;
 }
@@ -207,6 +209,7 @@ void Expresie::evaluateExpresie() {
     // Verifica rezultatul final
     if (operanzi.size() == 1) {
         rezultat = operanzi.getTop();
+        folosit = true;
         --operanzi;
     }
     else {
@@ -218,13 +221,14 @@ double Expresie::getRezultat() const {
 	return rezultat;
 }
 
+bool Expresie::getFolosit() const {
+    return folosit;
+}
+
 void Expresie::runCalculator() {
     cin >> *this;
-    /*while (strcmp(this->getExpresie(), "exit") != 0) {*/
-        this->evaluateExpresie();
-        cout << *this;
-        /*cin >> *this;*/
-   /* }*/
+    this->evaluateExpresie();
+    cout << *this;
 }
 
 Expresie::operator float() {
@@ -332,10 +336,16 @@ void Expresie::executaComanda(int tipComanda){
         break;
     case 3:
     {
+        if (!this->getFolosit())
+        {
+            cout << endl <<"Nu exista rezultat de salvat!" << endl;
+            break;
+        }
         ofstream f("fisier.bin", ios::out | ios::binary);
         if(!f)
             cout << "Eroare la deschiderea fisierului pentru salvare!" << endl;
         f.write((char*)&this->rezultat, sizeof(this->rezultat));
+        cout << endl << "Salvare reusita!" << endl;
     }
         break;
     default:

@@ -25,6 +25,7 @@ public:
     void setExpresie(const char* expr);
     void evaluateExpresie();
     double getRezultat() const;
+    bool getFolosit() const;
     void runCalculator();
     operator float();
     char& operator[](int index) const;
