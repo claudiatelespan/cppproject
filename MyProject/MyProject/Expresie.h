@@ -12,6 +12,7 @@ private:
     Operator* operatori;
     double rezultat;
     bool folosit;
+    bool salvat;
     static const double REZULTAT_DEFAULT;
 
 public:
@@ -26,6 +27,7 @@ public:
     void evaluateExpresie();
     double getRezultat() const;
     bool getFolosit() const;
+    bool getSalvat() const;
     void runCalculator();
     operator float();
     char& operator[](int index) const;

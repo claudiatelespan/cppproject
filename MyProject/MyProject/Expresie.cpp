@@ -7,11 +7,11 @@ using namespace std;
 
 const double Expresie::REZULTAT_DEFAULT = -1.0;
 
-Expresie::Expresie() :expresie(nullptr), rezultat(REZULTAT_DEFAULT), operatori(nullptr), operanzi(),folosit(false) {
+Expresie::Expresie() :expresie(nullptr), rezultat(REZULTAT_DEFAULT), operatori(nullptr), operanzi(),folosit(false), salvat(false) {
 
 }
 
-Expresie::Expresie(const char* expr) :operatori(nullptr), operanzi(), folosit(false) {
+Expresie::Expresie(const char* expr) :operatori(nullptr), operanzi(), folosit(false), salvat(false) {
 	this->setExpresie(expr);
 }
 
@@ -20,6 +20,7 @@ Expresie::Expresie(const Expresie& e) {
 	operanzi = e.operanzi;
 	operatori = e.operatori;
     folosit = e.folosit;
+    salvat = e.salvat;
 }
 	
 Expresie& Expresie::operator=(const Expresie& e) {
@@ -28,6 +29,7 @@ Expresie& Expresie::operator=(const Expresie& e) {
 		operatori = e.operatori;
 		operanzi = e.operanzi;
         folosit = e.folosit;
+        salvat = e.salvat;
 	}
 	return *this;
 }
@@ -63,7 +65,29 @@ void Expresie::evaluateExpresie() {
     }
         
     for (int i = 0; i < strlen(expresie); ++i) {
-        if (isdigit(expresie[i])) {
+        //Verifica daca intalneste "ans" si citeste din fisierul binar, daca exista
+        if (isalpha(expresie[i])) {
+            int j = i;
+            while (isalpha(expresie[i]) && i < strlen(expresie))
+                i++;
+            i--;
+            char* s = new char[i-j+2];
+            strncpy_s(s, i - j + 2, expresie + j, i - j + 1);
+            if(strcmp(s,"ans") != 0)
+                throw std::invalid_argument("Expresie invalida");
+            else
+            {
+                if (salvat == false)
+                    throw std::invalid_argument("Nu exista niciun rezultat salvat!");
+                ifstream g("fisier.bin", ios::in | ios::binary);
+                double x;
+                if (!g)
+                    cout << "Eroare la deschiderea fisierului pentru salvare!" << endl;
+                g.read((char*)&x, sizeof(x));
+                operanzi = operanzi + x;
+            }
+        }
+        else if (isdigit(expresie[i])) {
             // Construieste operandul
             double val = stod(&expresie[i]);
             operanzi = operanzi + val;
@@ -346,6 +370,7 @@ void Expresie::executaComanda(int tipComanda){
             cout << "Eroare la deschiderea fisierului pentru salvare!" << endl;
         f.write((char*)&this->rezultat, sizeof(this->rezultat));
         cout << endl << "Salvare reusita!" << endl;
+        this->salvat = true;
     }
         break;
     default:
