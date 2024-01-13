@@ -2,7 +2,7 @@
 #include <iomanip>
 #include <fstream> 
 #include <sstream>
-
+#include <stack>
 using namespace std;
 
 const double Expresie::REZULTAT_DEFAULT = -1.0;
@@ -50,10 +50,8 @@ void Expresie::setExpresie(const char* expr) {
 }
 
 void Expresie::evaluateExpresie() {
-    const int maxOperatori = 10;
-    Operator stivaOperatori[maxOperatori];
-    int topOperatori = -1;
-
+    stack<Operator> stivaOperatori;
+    
     //Inlocuiesc parantezele patrate cu rotunde
     for (int i = 0; i < strlen(expresie); ++i) {
         if (expresie[i] == '[')
@@ -67,24 +65,30 @@ void Expresie::evaluateExpresie() {
             // Construieste operandul
             double val = stod(&expresie[i]);
             operanzi = operanzi + val;
+            int temp = 0;
             while (i + 1 < strlen(expresie) && (isdigit(expresie[i + 1]) || expresie[i + 1] == '.')) {
+                if (expresie[i + 1] == '.')
+                    temp++;
                 ++i;
             }
+            if (temp > 1)
+                throw std::invalid_argument("Numar invalid");
         }
         else if (expresie[i] == '+' || expresie[i] == '-' || expresie[i] == '*' || expresie[i] == '/' || expresie[i] == '^' || expresie[i] == '#') {
             // Construieste operatorul
             Operator currentOperator(expresie[i]);
             // Proceseaza operatorii existenti cu precedenta mai mare sau egala
-            while (topOperatori >= 0 &&
-                !stivaOperatori[topOperatori].isOpenParenthesis() &&
-                stivaOperatori[topOperatori] >= currentOperator &&
-                ((currentOperator.isLeftAssociative() && stivaOperatori[topOperatori] == currentOperator) ||
-                    stivaOperatori[topOperatori] > currentOperator)) {
+            while (stivaOperatori.size() > 0 &&
+                !stivaOperatori.top().isOpenParenthesis() &&
+                stivaOperatori.top() >= currentOperator &&
+                ((currentOperator.isLeftAssociative() && stivaOperatori.top() == currentOperator) ||
+                    stivaOperatori.top() > currentOperator)) {
                 double operand2 = operanzi.getTop();
                 --operanzi;
                 double operand1 = operanzi.getTop();
                 --operanzi;
-                Operator op = stivaOperatori[topOperatori--];
+                Operator op = stivaOperatori.top();
+                stivaOperatori.pop();
                 switch (op.getOperator()) {
                 case '+':
                     operanzi = operanzi + (operand1 + operand2);
@@ -113,20 +117,21 @@ void Expresie::evaluateExpresie() {
             }
 
             // Adauga operatorul curent la stivaOperatori
-            stivaOperatori[++topOperatori] = currentOperator;
+            stivaOperatori.push(currentOperator);
         }
         else if (expresie[i] == '(') {
             // Adauga paranteza deschisa la stivaOperatori
-            stivaOperatori[++topOperatori] = Operator('(');
+            stivaOperatori.push(Operator('('));
         }
         else if (expresie[i] == ')') {
             // Proceseaza operatorii pana la paranteza deschisa corespunzatoare
-            while (topOperatori >= 0 && !stivaOperatori[topOperatori].isOpenParenthesis()) {
+            while (stivaOperatori.size() > 0 && !stivaOperatori.top().isOpenParenthesis()) {
                 double operand2 = operanzi.getTop();
                 --operanzi;
                 double operand1 = operanzi.getTop();
                 --operanzi;
-                Operator op = stivaOperatori[topOperatori--];
+                Operator op = stivaOperatori.top();
+                stivaOperatori.pop();
                 switch (op.getOperator()) {
                 case '+':
                     operanzi = operanzi + (operand1 + operand2);
@@ -155,8 +160,8 @@ void Expresie::evaluateExpresie() {
             }
 
             // Elimina paranteza deschisa din stivaOperatori
-            if (topOperatori >= 0 && stivaOperatori[topOperatori].isOpenParenthesis()) {
-                --topOperatori;
+            if (stivaOperatori.size() > 0 && stivaOperatori.top().isOpenParenthesis()) {
+                stivaOperatori.pop();
             }
             else {
                 throw std::invalid_argument("Paranteza inchisa fara corespondent deschis");
@@ -165,12 +170,13 @@ void Expresie::evaluateExpresie() {
     }
 
     // Proceseaza operatorii ramasi
-    while (topOperatori >= 0) {
+    while (stivaOperatori.size() > 0) {
         double operand2 = operanzi.getTop();
         --operanzi;
         double operand1 = operanzi.getTop();
         --operanzi;
-        Operator op = stivaOperatori[topOperatori--];
+        Operator op = stivaOperatori.top();
+        stivaOperatori.pop();
         switch (op.getOperator()) {
         case '+':
             operanzi = operanzi + (operand1 + operand2);
@@ -214,11 +220,11 @@ double Expresie::getRezultat() const {
 
 void Expresie::runCalculator() {
     cin >> *this;
-    while (strcmp(this->getExpresie(), "exit") != 0) {
+    /*while (strcmp(this->getExpresie(), "exit") != 0) {*/
         this->evaluateExpresie();
         cout << *this;
-        cin >> *this;
-    }
+        /*cin >> *this;*/
+   /* }*/
 }
 
 Expresie::operator float() {
@@ -258,7 +264,7 @@ istream& operator>>(istream& in, Expresie& e) {
 void Expresie::citesteEcuatiiDinFisier(const char* fisierCitire) {
     ifstream fisier(fisierCitire);
     if (!fisier.is_open()) {
-        cerr << "Eroare la deschiderea fisierului!" << endl;
+        cout << "Eroare la deschiderea fisierului!" << endl;
         return;
     }
     
@@ -274,7 +280,7 @@ void Expresie::citesteEcuatiiDinFisier(const char* fisierCitire) {
         cin >> fisierAfisare;
         outFile.open(fisierAfisare, ios::trunc);
         if (!outFile.is_open()) {
-            cerr << "Eroare la deschiderea fisierului pentru scriere!" << endl;
+            cout << "Eroare la deschiderea fisierului pentru scriere!" << endl;
             return;
         }
     }
@@ -291,7 +297,7 @@ void Expresie::citesteEcuatiiDinFisier(const char* fisierCitire) {
             cout << "Rezultatul a fost salvat in " << fisierAfisare << endl;
         }
         else {
-            cerr << "Optiune invalida!" << endl;
+            cout << "Optiune invalida!" << endl;
         }
     }
 
@@ -301,7 +307,10 @@ void Expresie::citesteEcuatiiDinFisier(const char* fisierCitire) {
 
 void Expresie::afiseazaOptiuni() {
     cout << endl << "Meniu de comenzi" << endl;
-    cout << "0. Iesire"<< endl<<"1. Introducere ecuatie" << endl << "2. Preluare ecuatii din fisier text" << endl << endl;   
+    cout << "0. Iesire" << endl;
+    cout << "1. Introducere ecuatie" << endl;
+    cout << "2. Preluare ecuatii din fisier text" << endl;
+    cout << "3. Salvare rezultat precedent" << endl << endl;
 }
 
 void Expresie::executaComanda(int tipComanda){
@@ -310,7 +319,6 @@ void Expresie::executaComanda(int tipComanda){
         cout << "La revedere!" << endl;
         break;
     case 1: {
-        cout << endl << "Pentru revenire la meniul principal, scrieti exit" << endl;
         this->runCalculator();
     }
         break;
@@ -322,7 +330,14 @@ void Expresie::executaComanda(int tipComanda){
         this->citesteEcuatiiDinFisier(fisierCitire.c_str()); 
     }
         break;
-       
+    case 3:
+    {
+        ofstream f("fisier.bin", ios::out | ios::binary);
+        if(!f)
+            cout << "Eroare la deschiderea fisierului pentru salvare!" << endl;
+        f.write((char*)&this->rezultat, sizeof(this->rezultat));
+    }
+        break;
     default:
         cout << "Optiune invalida!" << endl;
         break;

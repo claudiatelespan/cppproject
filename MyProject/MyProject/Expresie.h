@@ -11,6 +11,7 @@ private:
     StackOperanzi operanzi;
     Operator* operatori;
     double rezultat;
+    bool folosit;
     static const double REZULTAT_DEFAULT;
 
 public:
