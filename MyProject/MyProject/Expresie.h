@@ -27,6 +27,10 @@ public:
     operator float();
     char& operator[](int index) const;
 
+    //faza 2
+    void citesteEcuatiiDinFisier(const char* numeFisier);
+    void proceseazaRezultat(double rezultat);
+
     friend std::ostream& operator<<(std::ostream& out, const Expresie& e);
     friend std::istream& operator>>(std::istream& in, Expresie& e);
 };

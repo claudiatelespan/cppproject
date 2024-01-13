@@ -1,5 +1,6 @@
 #include "Expresie.h"
 #include <iomanip>
+#include <fstream> 
 #include <sstream>
 
 using namespace std;
@@ -205,6 +206,8 @@ void Expresie::evaluateExpresie() {
     else {
         throw std::invalid_argument("Expresie invalida");
     }
+
+   // proceseazaRezultat(rezultat);
 }
 
 double Expresie::getRezultat() const {
@@ -251,6 +254,58 @@ istream& operator>>(istream& in, Expresie& e) {
     e.setExpresie(copie.c_str());
 	return in;
 }
+
+//FAZA 2
+
+void Expresie::citesteEcuatiiDinFisier(const char* fisierCitire) {
+    ifstream fisier(fisierCitire);
+    if (!fisier.is_open()) {
+        cerr << "Eroare la deschiderea fisierului!" << endl;
+        return;
+    }
+    
+    int optiune;
+    cout << "Alegeti modul de afisare:" << endl << "1. Afisare la consola" << endl << "2. Salvare in fisier text" << endl;
+    cin >> optiune;
+
+    string fisierAfisare;
+    if(optiune==2){
+        cout << "Introduceti numele fisierului pentru salvare: ";
+        cin >> fisierAfisare;
+    }
+        
+    string linie;
+    while (getline(fisier, linie)) {
+        Expresie ecuatie(linie.c_str());
+        ecuatie.evaluateExpresie();
+        if (optiune == 1) {
+            cout << "Rezultat: " << ecuatie.rezultat << endl;
+        }
+        else if (optiune == 2) {
+            ofstream outFile(fisierAfisare, ios::app);
+            if (!outFile.is_open()) {
+                cerr << "Eroare la deschiderea fisierului pentru scriere!" << endl;
+                return;
+            }
+
+            outFile << "Rezultat: " << ecuatie.rezultat << endl;
+            outFile.close();
+            cout << "Rezultatul a fost salvat in " << fisierAfisare << endl;
+        }
+        else {
+            cerr << "Optiune invalida!" << endl;
+        }
+    }
+
+    fisier.close();
+}
+
+void Expresie::proceseazaRezultat(double rezultat) {
+    
+    
+}
+
+//destructori
 
 Expresie::~Expresie() {
 	if (expresie != nullptr)
