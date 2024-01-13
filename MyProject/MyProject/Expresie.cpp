@@ -35,7 +35,7 @@ char* Expresie::getExpresie() const {
 }
 
 void Expresie::setExpresie(const char* expr) {
-	if (strlen(expr) < 3 || expr == nullptr)
+	if (expr == nullptr || strlen(expr) < 3)
 		throw exception("Expresie invalida");
 	if (operatori != nullptr)
 	{
@@ -206,8 +206,6 @@ void Expresie::evaluateExpresie() {
     else {
         throw std::invalid_argument("Expresie invalida");
     }
-
-   // proceseazaRezultat(rezultat);
 }
 
 double Expresie::getRezultat() const {
@@ -239,16 +237,16 @@ char& Expresie::operator[](int index) const {
 
 ostream& operator<<(ostream& out, const Expresie& e) {
     if (e.getRezultat() == (int)e.getRezultat()) {
-        out << "Rezultatul expresiei: " << (int)e.getRezultat();
+        out << "Rezultatul expresiei: " << (int)e.getRezultat() << endl;
     }
     else {
-        out << "Rezultatul expresiei: " << e.getRezultat();
+        out << "Rezultatul expresiei: " << e.getRezultat() << endl;
     }
     return out;
 }
 
 istream& operator>>(istream& in, Expresie& e) {
-	cout << endl << "Introduceti expresie: ";
+    cout << endl << "Introduceti expresie: ";
 	string copie;
     getline(in, copie);
     e.setExpresie(copie.c_str());
@@ -269,27 +267,27 @@ void Expresie::citesteEcuatiiDinFisier(const char* fisierCitire) {
     cin >> optiune;
 
     string fisierAfisare;
+    ofstream outFile;
+
     if(optiune==2){
         cout << "Introduceti numele fisierului pentru salvare: ";
         cin >> fisierAfisare;
+        outFile.open(fisierAfisare, ios::trunc);
+        if (!outFile.is_open()) {
+            cerr << "Eroare la deschiderea fisierului pentru scriere!" << endl;
+            return;
+        }
     }
         
     string linie;
     while (getline(fisier, linie)) {
-        Expresie ecuatie(linie.c_str());
-        ecuatie.evaluateExpresie();
+        this->setExpresie(linie.c_str());
+        this->evaluateExpresie();
         if (optiune == 1) {
-            cout << "Rezultat: " << ecuatie.rezultat << endl;
+            cout << "Rezultat: " << this->getRezultat() << endl;
         }
         else if (optiune == 2) {
-            ofstream outFile(fisierAfisare, ios::app);
-            if (!outFile.is_open()) {
-                cerr << "Eroare la deschiderea fisierului pentru scriere!" << endl;
-                return;
-            }
-
-            outFile << "Rezultat: " << ecuatie.rezultat << endl;
-            outFile.close();
+            outFile << "Rezultat: " << this->getRezultat() << endl;
             cout << "Rezultatul a fost salvat in " << fisierAfisare << endl;
         }
         else {
@@ -297,12 +295,38 @@ void Expresie::citesteEcuatiiDinFisier(const char* fisierCitire) {
         }
     }
 
+    outFile.close();
     fisier.close();
 }
 
-void Expresie::proceseazaRezultat(double rezultat) {
-    
-    
+void Expresie::afiseazaOptiuni() {
+    cout << endl << "Meniu de comenzi" << endl;
+    cout << "0. Iesire"<< endl<<"1. Introducere ecuatie" << endl << "2. Preluare ecuatii din fisier text" << endl << endl;   
+}
+
+void Expresie::executaComanda(int tipComanda){
+    switch (tipComanda) {
+    case 0:
+        cout << "La revedere!" << endl;
+        break;
+    case 1: {
+        cout << endl << "Pentru revenire la meniul principal, scrieti exit" << endl;
+        this->runCalculator();
+    }
+        break;
+    case 2:
+    { 
+        string fisierCitire;
+        cout << "Introduceti numele fisierului cu ecuatii: ";
+        cin >> fisierCitire;
+        this->citesteEcuatiiDinFisier(fisierCitire.c_str()); 
+    }
+        break;
+       
+    default:
+        cout << "Optiune invalida!" << endl;
+        break;
+    }
 }
 
 //destructori

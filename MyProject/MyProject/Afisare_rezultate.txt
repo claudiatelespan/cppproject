@@ -1,2 +1,10 @@
-Rezultat: 16
+Rezultat: 0.00250451
 Rezultat: 10
+Rezultat: 1.00059
+Rezultat: 16
+Rezultat: 88
+Rezultat: 7
+Rezultat: 6.4
+Rezultat: 2.43423e+07
+Rezultat: -2
+Rezultat: -0

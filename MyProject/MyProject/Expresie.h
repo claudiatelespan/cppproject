@@ -1,10 +1,11 @@
 #pragma once
 #include "StackOperanzi.h"
 #include "Operator.h"
+#include "Meniu.h"
 #include <iostream>
 #include <string>
 
-class Expresie {
+class Expresie : public Meniu{
 private:
     char* expresie;
     StackOperanzi operanzi;
@@ -29,7 +30,8 @@ public:
 
     //faza 2
     void citesteEcuatiiDinFisier(const char* numeFisier);
-    void proceseazaRezultat(double rezultat);
+    void afiseazaOptiuni();
+    void executaComanda(int optiune);
 
     friend std::ostream& operator<<(std::ostream& out, const Expresie& e);
     friend std::istream& operator>>(std::istream& in, Expresie& e);
