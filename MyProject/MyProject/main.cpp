@@ -12,14 +12,13 @@ int main(int argc, char* argv[]) {
     }
     else {
         Expresie e;
-        int tipComanda=-1;
+        int tipComanda = -1;
         while (tipComanda != 0) {
             e.afiseazaOptiuni();
             cout << "Introduceti optiunea dvs.: ";
-            cin>>tipComanda;
+            cin >> tipComanda;
             cin.ignore();
             e.executaComanda(tipComanda);
-            
         }
     }
 

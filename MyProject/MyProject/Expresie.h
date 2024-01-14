@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-class Expresie : public Meniu{
+class Expresie : public Meniu {
 private:
     char* expresie;
     StackOperanzi operanzi;

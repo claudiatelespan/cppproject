@@ -7,7 +7,7 @@ using namespace std;
 
 const double Expresie::REZULTAT_DEFAULT = -1.0;
 
-Expresie::Expresie() :expresie(nullptr), rezultat(REZULTAT_DEFAULT), operatori(nullptr), operanzi(),folosit(false), salvat(false) {
+Expresie::Expresie() :expresie(nullptr), rezultat(REZULTAT_DEFAULT), operatori(nullptr), operanzi(), folosit(false), salvat(false) {
 
 }
 
@@ -40,7 +40,7 @@ char* Expresie::getExpresie() const {
 
 void Expresie::setExpresie(const char* expr) {
 	if (expr == nullptr || strlen(expr) < 3)
-		throw exception("Expresie invalida");
+        throw std::invalid_argument("Expresie invalida");
 	if (operatori != nullptr)
 	{
 		delete[] operatori;
@@ -71,12 +71,13 @@ void Expresie::evaluateExpresie() {
             while (isalpha(expresie[i]) && i < strlen(expresie))
                 i++;
             i--;
-            char* s = new char[i-j+2];
+            char* s = new char[i-j+2]; //variabila in care copiez sirul de litere identificat in ecuatie
             strncpy_s(s, i - j + 2, expresie + j, i - j + 1);
             if(strcmp(s,"ans") != 0)
                 throw std::invalid_argument("Expresie invalida");
             else
             {
+                //Citirea din fisierul binar a unui rezultat salvat anterior
                 if (salvat == false)
                     throw std::invalid_argument("Nu exista niciun rezultat salvat!");
                 ifstream g("fisier.bin", ios::in | ios::binary);
@@ -94,7 +95,7 @@ void Expresie::evaluateExpresie() {
             int temp = 0;
             while (i + 1 < strlen(expresie) && (isdigit(expresie[i + 1]) || expresie[i + 1] == '.')) {
                 if (expresie[i + 1] == '.')
-                    temp++;
+                    temp++; //Numara cate "." intalneste in acelasi operand, identificand expresii gresite
                 ++i;
             }
             if (temp > 1)
@@ -102,13 +103,13 @@ void Expresie::evaluateExpresie() {
         }
         else if (expresie[i] == '+' || expresie[i] == '-' || expresie[i] == '*' || expresie[i] == '/' || expresie[i] == '^' || expresie[i] == '#') {
             // Construieste operatorul
-            Operator currentOperator(expresie[i]);
+            Operator operatorCurent(expresie[i]);
             // Proceseaza operatorii existenti cu precedenta mai mare sau egala
             while (stivaOperatori.size() > 0 &&
                 !stivaOperatori.top().isOpenParenthesis() &&
-                stivaOperatori.top() >= currentOperator &&
-                ((currentOperator.isLeftAssociative() && stivaOperatori.top() == currentOperator) ||
-                    stivaOperatori.top() > currentOperator)) {
+                stivaOperatori.top() >= operatorCurent &&
+                ((operatorCurent.isLeftAssociative() && stivaOperatori.top() == operatorCurent) ||
+                    stivaOperatori.top() > operatorCurent)) {
                 double operand2 = operanzi.getTop();
                 --operanzi;
                 double operand1 = operanzi.getTop();
@@ -143,7 +144,7 @@ void Expresie::evaluateExpresie() {
             }
 
             // Adauga operatorul curent la stivaOperatori
-            stivaOperatori.push(currentOperator);
+            stivaOperatori.push(operatorCurent);
         }
         else if (expresie[i] == '(') {
             // Adauga paranteza deschisa la stivaOperatori
@@ -249,6 +250,10 @@ bool Expresie::getFolosit() const {
     return folosit;
 }
 
+bool Expresie::getSalvat() const {
+    return salvat;
+}
+
 void Expresie::runCalculator() {
     cin >> *this;
     this->evaluateExpresie();
@@ -297,14 +302,14 @@ void Expresie::citesteEcuatiiDinFisier(const char* fisierCitire) {
     }
     
     int optiune;
-    cout << "Alegeti modul de afisare:" << endl << "1. Afisare la consola" << endl << "2. Salvare in fisier text" << endl;
+    cout << endl << "Alegeti modul de afisare:" << endl << "1. Afisare la consola" << endl << "2. Salvare in fisier text" << endl;
     cin >> optiune;
 
     string fisierAfisare;
     ofstream outFile;
 
     if(optiune==2){
-        cout << "Introduceti numele fisierului pentru salvare: ";
+        cout << endl << "Introduceti numele fisierului pentru salvare: ";
         cin >> fisierAfisare;
         outFile.open(fisierAfisare, ios::trunc);
         if (!outFile.is_open()) {
@@ -353,7 +358,7 @@ void Expresie::executaComanda(int tipComanda){
     case 2:
     { 
         string fisierCitire;
-        cout << "Introduceti numele fisierului cu ecuatii: ";
+        cout << endl << "Introduceti numele fisierului cu ecuatii: ";
         cin >> fisierCitire;
         this->citesteEcuatiiDinFisier(fisierCitire.c_str()); 
     }
